@@ -3,6 +3,7 @@ import Message from './Message';
 import axios from 'axios';
 import update from 'immutability-helper';
 import { MESSAGE_API } from '../api';
+import styles from './MessageList.css';
 
 class MessageList extends Component {
   constructor(props) {
@@ -54,7 +55,7 @@ class MessageList extends Component {
     };
 
     return (
-      <div>
+      <div className={styles.mainContainer}>
         {mapMessages(this.state.messages)}
       </div>
     );

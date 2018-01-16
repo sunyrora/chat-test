@@ -1,0 +1,8 @@
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  border: 1px solid rgb(187, 221, 187);
+  padding: 0px;
+  background-color: honeydew;
+}

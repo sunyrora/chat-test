@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MessageList from '../components/MessageList';
 import Write from '../components/Write';
 import axios from 'axios';
+import styles from './Chat.css';
 
 import { POST_API } from '../api';
 
@@ -31,7 +32,7 @@ class Chat extends Component {
 
   render() {
     return (
-      <div >
+      <div className={styles.chatContainer} >
         <MessageList 
           ref={(c)=>{this.messageList = c}}
         />

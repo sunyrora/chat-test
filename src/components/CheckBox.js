@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import styles from './Write.css';
 
 class Checkbox extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class Checkbox extends Component {
     const { isChecked } = this.state;
 
     return (
-      <label >
+      <label  className={styles.checkBox}>
         <input
           type='checkbox'
           value={label}

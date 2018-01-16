@@ -1,0 +1,44 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 5px;
+  overflow-y: auto;
+}
+
+.msgContainer {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  height: 100%;
+}
+
+.msgText {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+  width: auto;
+  height: 100%;
+  max-width: 220px;
+  padding: 10px;
+  text-align: left;
+  font-size: 1.1em;
+  line-height: 130%;
+  margin-right: 10px;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+}
+
+.msgLabel {
+  padding: 5px;
+  font-size: 0.7em;
+  align-self: flex-end;
+}
+
+div[class~="public"] {
+  background-color: rgb(218, 241, 250);
+}
+div[class~="private"] {
+  background-color: rgb(241, 237, 212);
+}

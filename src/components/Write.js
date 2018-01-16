@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CheckBox from './CheckBox';
+import styles from './Write.css';
 
 class Write extends Component {
   constructor(props) {
@@ -57,8 +58,9 @@ class Write extends Component {
 
   render() {
     return (
-      <div >
+      <div className={styles.writeContainer}>
         <textarea
+          className={styles.textInput}
           placeholder='Write down your message'
           name='message'
           value={this.state.message}
