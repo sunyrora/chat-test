@@ -32,12 +32,12 @@ describe('<CheckBox />', () => {
     expect(component.length).toBe(1);
   });
 
-  it('renders <label />', () => {
+  it('should render <label />', () => {
     const component = compShallow();
     expect(component.find('label')).toHaveLength(1);
   });
 
-  it('renders <input /> type=checkbox', () => {
+  it('should render <input /> type=checkbox', () => {
     const component = compShallow();
     expect(component.find('[type="checkbox"]')).toHaveLength(1);
   });
