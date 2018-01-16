@@ -4,23 +4,23 @@ import Message from '../components/Message';
 
 describe("<Message />", () => {
   let props;
-  let message;
-  const msgShallow = () => {
-    if(!message) {
-      message = shallow(
+  let comp;
+  const compShallow = () => {
+    if(!comp) {
+      comp = shallow(
         <Message {...props} />
       );
     }
-    return message;
+    return comp;
   };
 
-  const msgMount = () => {
-    if(!message) {
-      message = mount(
+  const compMount = () => {
+    if(!comp) {
+      comp = mount(
         <Message {...props} />
       );
     }
-    return message;
+    return comp;
   };
 
   beforeEach(() => {
@@ -29,16 +29,16 @@ describe("<Message />", () => {
       isPublic: undefined,
     };
 
-    message = undefined;
+    comp = undefined;
   });
 
   it('should render without issues', () => {
-    const component = msgShallow();
+    const component = compShallow();
     expect(component.length).toBe(1);
   });
 
   it('prints text prop', () => {
-    const component = msgShallow();
+    const component = compShallow();
     const divs = component.find('div');
     const searched = divs.findWhere(n => n.text() === props.text);
     expect(searched.exists()).toEqual(true);
@@ -50,7 +50,7 @@ describe("<Message />", () => {
     });
 
     it('should print "public"', () => {
-      const component = msgShallow();
+      const component = compShallow();
       const divs = component.find('div');
       const searched = divs.findWhere(n => n.text() === 'public');
       expect(searched.exists()).toEqual(true);
@@ -63,7 +63,7 @@ describe("<Message />", () => {
     });
 
     it('should print "private"', () => {
-      const component = msgShallow();
+      const component = compShallow();
       const divs = component.find('div');
       const searched = divs.findWhere(n => n.text() === 'private');
       expect(searched.exists()).toEqual(true);
