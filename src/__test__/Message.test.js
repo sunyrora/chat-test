@@ -38,10 +38,11 @@ describe("<Message />", () => {
   });
 
   it('prints text prop', () => {
-    const component = compShallow();
-    const divs = component.find('div');
-    const searched = divs.findWhere(n => n.text() === props.text);
-    expect(searched.exists()).toEqual(true);
+    const component = compMount();
+   const searched =  component.containsAnyMatchingElements([
+      <div>Message Test</div>
+    ]);
+    expect(searched).toEqual(true);
   });
 
   describe('isPublic prop is true', () => {
@@ -50,10 +51,11 @@ describe("<Message />", () => {
     });
 
     it('should print "public"', () => {
-      const component = compShallow();
-      const divs = component.find('div');
-      const searched = divs.findWhere(n => n.text() === 'public');
-      expect(searched.exists()).toEqual(true);
+      const component = compMount();
+      const searched =  component.containsAnyMatchingElements([
+        <div>public</div>
+      ]);
+      expect(searched).toEqual(true);
     });
   });
 
@@ -63,10 +65,11 @@ describe("<Message />", () => {
     });
 
     it('should print "private"', () => {
-      const component = compShallow();
-      const divs = component.find('div');
-      const searched = divs.findWhere(n => n.text() === 'private');
-      expect(searched.exists()).toEqual(true);
+      const component = compMount();
+      const searched =  component.containsAnyMatchingElements([
+        <div>private</div>
+      ]);
+      expect(searched).toEqual(true);
     });
   });
 });

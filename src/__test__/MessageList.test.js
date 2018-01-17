@@ -2,8 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import MessageList from '../components/MessageList';
 import Message from '../components/Message';
-import axios from 'axios';
-import { MESSAGE_API } from '../api';
+import moxios from 'moxios'
 
 describe('<MessageList />', () => {
   const messages = [
@@ -12,12 +11,8 @@ describe('<MessageList />', () => {
     { id: 2, text: "Message 2", isPublic: true },
   ];
 
-  const response = {
-    data: messages,
-    status: 200,
-  };
-
-  axios.get = jest.fn(() => new Promise(res => res(response)));
+  let spy;
+  const createSpy = name => jest.spyOn(MessageList.prototype, name);
 
   let comp;
   const compShallow = (disableLifecycleMethods=false) => {
@@ -36,6 +31,16 @@ describe('<MessageList />', () => {
 
   beforeEach(() => {
     comp = undefined;
+    moxios.install();
+  });
+
+  afterEach(() => {
+    moxios.uninstall()
+
+    if(spy) {
+      spy.mockReset();
+      spy.mockRestore();
+    }
   });
 
   it('should render without issues', () => {
@@ -43,38 +48,93 @@ describe('<MessageList />', () => {
     expect(component.length).toBe(1);
   });
 
-  xit('should render <Message /> component as mush as state.message.length', () =>{
-    const component = compMount();
-    component.setState(messages);
+  describe('Render all components', () => {
+    const component = compShallow();    
+    component.instance().fetchMessages = jest.fn(); // avoid network ruquest
+    component.setState({messages});
 
-    // shallow doesn't find dumb component..
-    expect(component.find(Message).length).toEqual(messages.length);
-  });
-
-  describe('componentDidMount', () => {    
-    it('send request for get messages', () => {
-      const component = compShallow();
-      expect(axios.get).toHaveBeenCalled();
-      expect(axios.get).toHaveBeenCalledWith(MESSAGE_API);
-    });
-
-    it('should update the state', async () => {
-      const component = compShallow(true);
-      const fetchMessages = component.instance().fetchMessages;
-      await fetchMessages();
-      component.state('messages').forEach((element, index) => {
-        expect(element.text).toEqual(messages[index].text);
-        expect(element.isPublic).toEqual(messages[index].isPublic);
-      });
-    });
+    it('should render Message component if state.message.length > 0', () => {      
+      expect(component.state('messages').length).toBe(messages.length);
+      expect(component.find(Message)).toHaveLength(messages.length);          
+    });    
   });
   
-  it('push a message to the state when addMessage is called', () => {
-    const component = compShallow(true);
-    const addMessage = component.instance().addMessage;
-    addMessage(messages[0]);
-    const added = component.state('messages');
-    expect(added[added.length-1]).toEqual(messages[0]);
+  describe('componentDidMount', () => {
+
+    it('calls fetchMessages', () => {
+      spy = createSpy('fetchMessages');
+      const component = compShallow(true);
+      component.instance().componentDidMount();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should update the state', async (done) => {
+      const component = compShallow();
+      moxios.wait(() => {
+        let request = moxios.requests.mostRecent();
+        request.respondWith({
+          status: 200,
+          response: messages,
+        })
+        .then(res => {
+          component.state('messages').forEach((element, index) => {
+            expect(element.text).toEqual(messages[index].text);
+            expect(element.isPublic).toEqual(messages[index].isPublic);
+          });
+          expect(component.state('loadOldMessage')).toEqual(false);
+
+          done();
+        })
+        .catch(error => {
+          console.log(error.stack);
+        });
+      });
+      
+    });
+  });
+
+  describe('addNewMessage method', () => {
+    const component = compShallow(false);    
+    it('push a message to state.messages when addNewMessage is called', () => {
+      const addNewMessage = component.instance().addNewMessage;
+      addNewMessage(messages[0]);
+      const added = component.state('messages')[component.state('messages').length-1];
+      expect(added).toEqual(messages[0]);
+    });
+  });
+
+
+  describe('scroll event', () => {
+    it('fires handleScroll event', () => {
+      spy = createSpy('handleScroll');
+      const component = compMount();
+      const messageList = component.find({name: 'messageList'});
+      messageList.simulate('scroll');
+      expect(spy).toHaveBeenCalled();      
+    });   
+    
+    describe('When scroll is on top', () => {
+      it('calls fetchOldMessages', () => {
+        spy = createSpy('fetchOldMessages');
+        const component = compMount();
+        const messageList = component.find({name: 'messageList'});
+        // no data so scrollTop is 0
+        messageList.simulate('scroll');
+        expect(spy).toHaveBeenCalled();
+      });
+    });
+
+    // nett to find how to simulate scrollToBottom event
+    xdescribe('When scroll is on bottom', () => {
+      it('calls fetchNewMessages', () => {
+        spy = createSpy('fetchNewMessages');
+        const component = compMount();
+        const messageList = component.find({name: 'messageList'});
+        
+        expect(spy).toHaveBeenCalled();
+      });
+    });
+
   });
 
 });

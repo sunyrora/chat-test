@@ -23,7 +23,7 @@ class Write extends Component {
   }
 
   handleFocus(event) {
-    console.log("handleFocus", event);
+    // console.log("handleFocus", event);
   }
 
   handleChange(event) {
@@ -70,7 +70,7 @@ class Write extends Component {
           ref={c=>{this.inputMessage=c}}
           autoFocus
         />
-        <button onClick={this.handleSendMessage}>Send</button>
+        <button name='btnSend' onClick={this.handleSendMessage}>Send</button>
         <CheckBox
           label="public"
           ref={c=>{this.checkPublic=c}}
