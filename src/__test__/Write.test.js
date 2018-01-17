@@ -81,7 +81,7 @@ describe('<Write />', () => {
     });
   });
 
-  describe('button clicked', () => {
+  describe('Send button clicked', () => {
     it('fires handleSendMessage event', () => {
       spy = createSpy('handleSendMessage');
       const component = compMount();
@@ -113,7 +113,7 @@ describe('<Write />', () => {
 
         data = {
           text: component.state('message'),
-          isPublic: component.instance().checkPublic.getState().isChecked,
+          isPublic: component.instance().checkPublic.getChecked(),
         };
         component.find('button').simulate('click');
       });

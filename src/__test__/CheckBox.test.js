@@ -21,7 +21,7 @@ describe('<CheckBox />', () => {
 
   beforeEach(() => {
     props = {
-      label: 'public',
+      value: 'public',
     };
 
     comp = undefined;
@@ -42,9 +42,9 @@ describe('<CheckBox />', () => {
     expect(component.find('[type="checkbox"]')).toHaveLength(1);
   });
 
-  it("print label prop", () => {
+  it("print value prop", () => {
     const component = compShallow();
-    expect(component.find('label').text()).toEqual(props.label);
+    expect(component.find('label').text()).toEqual(props.value);
   });
 
   describe('Chekbox toggle', () => {

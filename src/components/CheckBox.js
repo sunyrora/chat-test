@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import styles from './Write.css';
 
 class Checkbox extends Component {
@@ -13,36 +12,33 @@ class Checkbox extends Component {
     this.toggleCheckboxChange = this.toggleCheckboxChange.bind(this);
   }
 
-  getState() {
-    return this.state;
+  getChecked = () => {
+    return this.state.isChecked;
   }
 
-  toggleCheckboxChange() {
+  toggleCheckboxChange(event) {
     this.setState(({ isChecked }) => (
-      {isChecked: !isChecked}
+      {isChecked: !isChecked }
     ));
   }
 
   render() {
-    const { label } = this.props;
-    const { isChecked } = this.state;
+    const { value } = this.props;
 
     return (
-      <label  className={styles.checkBox}>
+      <div 
+        className={styles.checkBox}
+      >
         <input
+          {...this.props}
           type='checkbox'
-          value={label}
-          checked={isChecked}
+          checked={this.state.isChecked}
           onChange={this.toggleCheckboxChange}
         />
-        {label}
-      </label>
+        <label>{value}</label>
+      </div>
     );
   }
 }
-
-Checkbox.propTypes = {
-  label: PropTypes.string.isRequired,
-};
 
 export default Checkbox;
