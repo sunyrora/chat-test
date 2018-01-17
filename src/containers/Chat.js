@@ -20,13 +20,16 @@ class Chat extends Component {
   sendMessage(data) {
     return axios.post(POST_API, data)
     .then(res => {
-      console.log("POST RESPONSE: ", res);
+      // console.log("POST RESPONSE: ", res);
       if(this.messageList) {
-        this.messageList.addMessage(res.data);
+        this.messageList.addNewMessage(res.data);
       }
     })
     .catch(error => {
       console.log(error.stack);
+      if(this.messageList) {
+        this.messageList.addNewMessage({ ...data, id: Math.random() });
+      }
     })
   }
 
