@@ -71,9 +71,7 @@ describe('<Chat />', () => {
         text: 'Test for Click event calls sendMessage method', 
         isPublic: true,
       };
-      write.find('button').simulate('click', {
-        target: { name: 'btnSend', value: message}
-      });
+      write.find('button').simulate('click');
       
       moxios.wait(() => {
         let request = moxios.requests.mostRecent();
@@ -95,7 +93,10 @@ describe('<Chat />', () => {
       const component = compMount();
       const sendMessage = component.instance().sendMessage;
       const message = {
-        text: 'Test for call messageList.addNewMessage method', 
+        text: `Test for call messageList.addNewMessage method
+        multiline string 
+        multi multi
+        `, 
         isPublic: false,
       };
       const response = {

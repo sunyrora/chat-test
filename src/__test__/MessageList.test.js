@@ -6,9 +6,12 @@ import moxios from 'moxios'
 
 describe('<MessageList />', () => {
   const messages = [
-    { id: 0, text: "Message 0", isPublic: true },
-    { id: 1, text: "Message 1", isPublic: false },
-    { id: 2, text: "Message 2", isPublic: true },
+    { id: 0, text: `Test for call messageList.addNewMessage method
+    multiline string 
+    multi multi
+    `, isPublic: true },
+    { id: 1, text: 'Message 1', isPublic: false },
+    { id: 2, text: 'Message 2', isPublic: true },
   ];
 
   let spy;
@@ -94,15 +97,23 @@ describe('<MessageList />', () => {
   });
 
   describe('addNewMessage method', () => {
-    const component = compShallow(false);    
-    it('push a message to state.messages when addNewMessage is called', () => {
-      const addNewMessage = component.instance().addNewMessage;
+    let component;
+    let addNewMessage;
+    beforeEach(() => {
+      component = compShallow(false);  
+      addNewMessage = component.instance().addNewMessage;
       addNewMessage(messages[0]);
+    });
+
+    it('push a message to state.messages when addNewMessage is called', () => {      
       const added = component.state('messages')[component.state('messages').length-1];
       expect(added).toEqual(messages[0]);
     });
+    
+    it('renders one more Message component with passed text', () => {
+      expect(component.find(Message)).toHaveLength(component.state('messages').length);
+    });
   });
-
 
   describe('scroll event', () => {
     it('fires handleScroll event', () => {

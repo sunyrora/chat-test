@@ -7,6 +7,7 @@ describe('<Write />', () => {
   let props;
   let comp;
   let spy;
+  let message;
 
   const createSpy = name => jest.spyOn(Write.prototype, name);
 
@@ -29,6 +30,10 @@ describe('<Write />', () => {
       sendMessage: jest.fn(),
     };
 
+    message = `Message event change test
+    multiline
+    string
+    `;
     comp = undefined;
   });
 
@@ -61,8 +66,6 @@ describe('<Write />', () => {
 
   describe('textarea', () => {
     const component = compShallow();
-    const message = 'Message event change test';
-
     beforeEach(() => {
       component.find('textarea').simulate('change', {
         target: { name: 'message', value: message}
@@ -83,15 +86,41 @@ describe('<Write />', () => {
       spy = createSpy('handleSendMessage');
       const component = compMount();
       component.find('button').simulate('click');
+      
       expect(spy).toHaveBeenCalled();
     });
 
-    describe('sendMessage prop is defined', () => {      
-      it('calls sendMessage function passed', () => {
-        props.sendMessage = jest.fn(message => { console.log('sendMessage mock func: message: ', message); });
-        const component = compMount();
+    it('createMessageData function works well', () => {
+      const data = {
+        text: message,
+        isPublic: true,
+      };
+      const component = compShallow();
+      const res = component.instance().createMessageData(data.text, data.isPublic);
+      expect(res).toEqual(data);
+    });
+
+    describe('sendMessage prop is defined', () => {
+      let component;
+      let data;
+      beforeEach(() => {
+        props.sendMessage = jest.fn(msg => { console.log('sendMessage mock func: message: ', msg); });
+        component = compMount();
+        //to change the value of state.message
+        component.find('textarea').simulate('change', {
+          target: { name: 'message', value: message}
+        });
+
+        data = {
+          text: component.state('message'),
+          isPublic: component.instance().checkPublic.getState().isChecked,
+        };
         component.find('button').simulate('click');
+      });
+
+      it('calls sendMessage function passed from parent', () => {
         expect(component.prop('sendMessage')).toHaveBeenCalled();
+        expect(component.prop('sendMessage')).toHaveBeenCalledWith(data);
       });
     });
 
