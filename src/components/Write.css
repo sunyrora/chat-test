@@ -5,7 +5,7 @@
   margin-bottom: 0px;
   margin-top: 20px;
   padding: 10px;
-  background-color: rgb(187, 221, 187);
+  background-color: #eb8a5a;
 }
 
 textarea {
@@ -18,7 +18,7 @@ textarea {
   padding: 10px;
   overflow: auto;
   resize: none;
-  border: 2px solid #98d5f321;
+  border: 1px solid #ffcc99;
 }
 
 CheckBox {
@@ -26,7 +26,7 @@ CheckBox {
 }
 
 textarea:focus {
-  border: 2px solid #98d4f3;
+  border: 2px solid #ffcc99;
 }
 
 label.checkBox {
@@ -42,7 +42,10 @@ button {
   margin: 5px;
   padding: 5px;
   align-self: center;
-  background: #98d5f321;;
-  border: 1px solid black;
+  background: #fdce9e;
+  border: 1px solid #ff5805;
   border-radius: 2px;
+  color: #ff5805;
+  height: 40px;
+  border-radius: 5px;
 }
