@@ -28,6 +28,7 @@
   margin-right: 10px;
   overflow-y: auto;
   overflow-wrap: break-word;
+  white-space: pre-line;
 }
 
 .msgLabel {
