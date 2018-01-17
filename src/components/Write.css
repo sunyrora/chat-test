@@ -5,7 +5,7 @@
   margin-bottom: 0px;
   margin-top: 20px;
   padding: 10px;
-  background-color: #eb8a5a;
+  background-color: #e5753d;
 }
 
 textarea {
@@ -43,9 +43,9 @@ button {
   padding: 5px;
   align-self: center;
   background: #fdce9e;
-  border: 1px solid #ff5805;
+  border: 1px solid #e5753d;
   border-radius: 2px;
-  color: #ff5805;
+  color: #e5753d;
   height: 40px;
   border-radius: 5px;
 }
