@@ -8,6 +8,11 @@
   background-color: #e5753d;
 }
 
+*:focus {
+  border: 3px solid #faad60;
+  outline: none;
+}
+
 textarea {
   flex-grow: 3;
   height: 40px;
@@ -21,20 +26,25 @@ textarea {
   border: 1px solid #ffcc99;
 }
 
-CheckBox {
-  flex-grow: 1;
+.checkBox:focus {
+  border: 3px solid #f0844f;
 }
 
-textarea:focus {
-  border: 2px solid #ffcc99;
-}
-
-label.checkBox {
+.checkBox {
+  display: flex;
   font-size: 0.6em;
-  align-self: flex-end;
+  align-self: center;
+  text-align: center;
 }
-input[type=checkbox] {
-  background-color: cornflowerblue;
+
+.checkInput {
+  color: hotpink;
+  border: 10px solid hotpink;
+}
+
+label {
+  letter-spacing: 1px;
+  align-self: center;
 }
 
 button {
