@@ -7,7 +7,7 @@ import styles from './MessageList.css';
 import { getLatestData, getOldData, getNewData } from '../data';
 import { Events, scroller } from 'react-scroll';
 
-const LOAD_LIMIT = 20;
+const LOAD_LIMIT = 10;
 
 class MessageList extends Component {
   constructor(props) {
@@ -47,10 +47,8 @@ class MessageList extends Component {
   componentDidUpdate() {
     if(this.messagesList) {
       if(!this.state.loadOldMessage) {
-        console.log('scroll to: ', this.state.messages[this.state.messages.length-1])
-        this.scrollToWithContainer(this.state.messages[this.state.messages.length-1].id.toString());
-      } 
-      else {
+        this.messagesList.scrollTop = this.messagesList.scrollHeight;
+      } else {
         this.state.lastMessage && this.scrollToWithContainer(this.state.lastMessage.id.toString());
       }
     }
@@ -96,6 +94,7 @@ class MessageList extends Component {
     .catch(error => {
       console.log(error.stack);
       // for test when there is no server
+      
       const data = getLatestData(LOAD_LIMIT);
       this.setState({
         messages: data,
@@ -121,7 +120,7 @@ class MessageList extends Component {
       if(this.state.messages.length <= 0) {
         data = getLatestData(LOAD_LIMIT);
       } else {
-        data = getOldData(this.state.messages[0].id);
+        data = getOldData(this.state.messages[0].id, LOAD_LIMIT);
       }
 
       if(data) {
@@ -149,7 +148,7 @@ class MessageList extends Component {
       if(this.state.messages.length <= 0) {
         data = getLatestData(LOAD_LIMIT);
       } else {
-        data = getNewData(this.state.messages[this.state.messages.length-1].id);
+        data = getNewData(this.state.messages[this.state.messages.length-1].id, LOAD_LIMIT);
       }
 
       this.setState(({messages})=>({
@@ -158,7 +157,7 @@ class MessageList extends Component {
     });
   }
 
-  addNewMessage(message) { 
+  addNewMessage(message) {
     this.setState(({messages, loadOldMessage}) => ({
         messages: update(this.state.messages, { 
           $push: [message]
