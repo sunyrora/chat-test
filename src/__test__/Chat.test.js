@@ -49,7 +49,7 @@ describe('<Chat />', () => {
 
   describe('Render all components', () => {
     const component = compShallow();
-    it('should render MessageList component', () => {      
+    it('should render MessageList component', () => {
       expect(component.find(MessageList)).toHaveLength(1);
     });
     it('should render Write component', () => {      

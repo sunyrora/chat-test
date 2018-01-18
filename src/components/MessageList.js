@@ -24,6 +24,8 @@ class MessageList extends Component {
     this.addNewMessage = this.addNewMessage.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.scrollToWithContainer = this.scrollToWithContainer.bind(this);
+
+    this.mapMessages = this.mapMessages.bind(this);
   }
 
   componentDidMount() {
@@ -86,20 +88,24 @@ class MessageList extends Component {
   fetchMessages() {
     return axios.get(MESSAGE_API)
     .then(res =>{
-      this.setState({
-        messages: res.data,
-        lastMessage: res.data[0],
-      });
+      if(res.data && res.data.length > 0) {
+        this.setState({
+          messages: res.data,
+          lastMessage: res.data[0],
+        }); 
+      }
     })
     .catch(error => {
-      console.log(error.stack);
+      console.log('Call getLastesData ',error.stack);
       // for test when there is no server
       
       const data = getLatestData(LOAD_LIMIT);
-      this.setState({
-        messages: data,
-        lastMessage: data[0],
-      });
+      if(data && data.length > 0) {
+        this.setState({
+          messages: data,
+          lastMessage: data[0],
+        }); 
+      }
     });
   }
 
@@ -166,22 +172,24 @@ class MessageList extends Component {
     }));
   }
 
-  render() {
-    let mapMessages = (data)=>{
-      return data.map((message, i)=>{
-        return (
-          <Message
-            className='message'
-            key={message.id}
-            text={message.text}
-            isPublic={message.isPublic}
-            name={message.id.toString()}
-            id={message.id.toString()}
-          />
-        );
-      });
-    };
+  mapMessages(data) {
+    if(!data) return null;
 
+    return data.map((message, i)=>{
+      return (
+        <Message
+          className='message'
+          key={message.id}
+          text={message.text}
+          isPublic={message.isPublic}
+          name={message.id.toString()}
+          id={message.id.toString()}
+        />
+      );
+    });
+  };
+
+  render() {
     return (
       <div 
         className={styles.mainContainer}
@@ -190,7 +198,7 @@ class MessageList extends Component {
         onScroll={this.handleScroll}
         name='messageList'
       >
-        {mapMessages(this.state.messages)}
+        {this.mapMessages(this.state.messages)}
       </div>
     );
   }

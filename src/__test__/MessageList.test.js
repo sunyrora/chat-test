@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import MessageList from '../components/MessageList';
 import Message from '../components/Message';
-import moxios from 'moxios'
+import moxios from 'moxios';
 
 describe('<MessageList />', () => {
   const messages = [
@@ -59,11 +59,22 @@ describe('<MessageList />', () => {
     it('should render Message component if state.message.length > 0', () => {      
       expect(component.state('messages').length).toBe(messages.length);
       expect(component.find(Message)).toHaveLength(messages.length);          
-    });    
+    });
+
+    it('renders Message component with props', () => {
+      const searched = component.find(Message);
+      searched.forEach(node => {
+        expect(node.props('className')).toBeDefined();
+        expect(node.props('key')).toBeDefined();
+        expect(node.props('test')).toBeDefined();
+        expect(node.props('isPublic')).toBeDefined();
+        expect(node.props('name')).toBeDefined();
+        expect(node.props('id')).toBeDefined();
+      })
+    })
   });
   
   describe('componentDidMount', () => {
-
     it('calls fetchMessages', () => {
       spy = createSpy('fetchMessages');
       const component = compShallow(true);
@@ -71,7 +82,7 @@ describe('<MessageList />', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should update the state', async (done) => {
+    it('should update the state', (done) => {
       const component = compShallow();
       moxios.wait(() => {
         let request = moxios.requests.mostRecent();
@@ -99,19 +110,25 @@ describe('<MessageList />', () => {
   describe('addNewMessage method', () => {
     let component;
     let addNewMessage;
+    let newMessage;
     beforeEach(() => {
-      component = compShallow(false);  
+      component = compShallow();
+      component.instance().fetchMessages = jest.fn(); // avoid network ruquest
+      component.setState({messages});
       addNewMessage = component.instance().addNewMessage;
-      addNewMessage(messages[0]);
+      newMessage = { id: 3, text: 'Message 3', isPublic: true };
+      addNewMessage(newMessage);
+      component.update();
     });
 
-    it('push a message to state.messages when addNewMessage is called', () => {      
+    it('push a message to state.messages when addNewMessage is called', () => {
       const added = component.state('messages')[component.state('messages').length-1];
-      expect(added).toEqual(messages[0]);
+      expect(added).toEqual(newMessage);
     });
-    
-    it('renders one more Message component with passed text', () => {
-      expect(component.find(Message)).toHaveLength(component.state('messages').length);
+
+    it('renders one more Message Component with passed text', () => {  
+      expect(component.state('messages').length).toBe(messages.length + 1);
+      expect(component.find(Message)).toHaveLength(messages.length + 1);
     });
   });
 
