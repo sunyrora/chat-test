@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styles from './Write.css';
 
 class Checkbox extends Component {
   constructor(props) {
@@ -10,24 +9,35 @@ class Checkbox extends Component {
     };
 
     this.toggleCheckboxChange = this.toggleCheckboxChange.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   getChecked = () => {
     return this.state.isChecked;
   }
 
-  toggleCheckboxChange(event) {
+  toggleCheckboxChange() {
     this.setState(({ isChecked }) => (
       {isChecked: !isChecked }
     ));
   }
 
+  handleKeyDown(event) {
+    if(event.key === ' ') {
+      this.toggleCheckboxChange();
+    }
+  }
+
   render() {
-    const { value } = this.props;
+    const { value, className, tabIndex } = this.props;
 
     return (
       <div 
-        className={styles.checkBox}
+        className={className}
+        onKeyDown={this.handleKeyDown}
+        id='checkContainer'
+        ref={c => this.checkContainer = c}
+        tabIndex={tabIndex}
       >
         <input
           {...this.props}

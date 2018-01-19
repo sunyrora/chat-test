@@ -45,14 +45,23 @@ describe('<Write />', () => {
   });
 
   it('should render without issues', () => {
-    const component = compShallow();
+    const component = compMount();
     expect(component.length).toBe(1);
   });
 
   describe('Render all componets', () => {
-    const component = compShallow();
-    it('should render textarea', () => {      
-      expect(component.find('textarea')).toHaveLength(1);
+    const component = compMount();
+    it('should render textarea and set focus to the textarea', () => {  
+      const textarea = component.find('textarea');
+      const focused = document.activeElement;
+
+      console.log('textarea: ', textarea);
+      console.log('focused: ', focused);
+
+      // console.log('component.debug()', component.debug());
+      
+      expect(textarea).toHaveLength(1);
+      expect(textarea.matchesElement(focused)).toEqual(true);
     });
   
     it('should render button', () => {
@@ -64,8 +73,8 @@ describe('<Write />', () => {
     });
   });
 
-  describe('textarea', () => {
-    const component = compShallow();
+  describe('textarea onChange', () => {
+    const component = compMount();
     beforeEach(() => {
       component.find('textarea').simulate('change', {
         target: { name: 'message', value: message}
@@ -95,7 +104,7 @@ describe('<Write />', () => {
         text: message,
         isPublic: true,
       };
-      const component = compShallow();
+      const component = compMount();
       const res = component.instance().createMessageData(data.text, data.isPublic);
       expect(res).toEqual(data);
     });

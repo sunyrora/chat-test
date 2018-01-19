@@ -11,11 +11,10 @@ class Write extends Component {
       message: '',
     };
 
-    this.components = {};
+    this.components = undefined;
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSendMessage = this.handleSendMessage.bind(this);
-    this.handleFocus = this.handleFocus.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.send = this.send.bind(this);
@@ -23,17 +22,30 @@ class Write extends Component {
   }
 
   componentDidMount() {
+    if(!this.components) {
+      this.components = {
+        inputMessage: this.inputMessage,
+        btnSend: this.btnSend,
+        checkPublic: this.checkPublic.checkContainer,
+      };
+    }
+
     if(this.components['inputMessage']) {
       this.components['inputMessage'].focus();
     }
   }
 
-  focusNext = () => {
+  focusNext = (event) => {
     const activeElement = this.container.querySelector(':focus');
     if(activeElement === null) {
       this.components['inputMessage'].focus();
     } else {
-      let tabIndex = activeElement.tabIndex % 3 + 1;
+      let length = Object.keys(this.components).length;
+      let tabIndex = activeElement.tabIndex % length + 1;
+      if(event.shiftKey) {
+        tabIndex = activeElement.tabIndex - 1;
+        if(tabIndex <= 0) tabIndex = length;
+      }
       const values = Object.values(this.components);
       const next = values.find(element => {
         return element.tabIndex === tabIndex;
@@ -48,12 +60,8 @@ class Write extends Component {
   handleKeyDown(event) {
     if(event.key === 'Tab') {
       event.preventDefault();
-      this.focusNext();
+      this.focusNext(event);
     } 
-  }
-
-  handleFocus(event) {
-    // console.log("handleFocus", event);
   }
 
   handleChange (event) {
@@ -91,7 +99,7 @@ class Write extends Component {
       <div 
         className={styles.writeContainer} 
         ref={c => this.container = c} 
-        // onKeyDown={this.handleKeyDown} //disable for a moment
+        onKeyDown={this.handleKeyDown}
       >
         <textarea
           className={styles.textInput}
@@ -99,30 +107,25 @@ class Write extends Component {
           name='message'
           value={this.state.message}
           onChange={this.handleChange}
-          onFocus={this.handleFocus}
-          ref={c=>{this.components['inputMessage']=c}}
+          ref={c=>{this.inputMessage=c}}
           tabIndex='1'
         />
         <button 
           name='btnSend' 
           onClick={this.handleSendMessage}
-          ref={c=>{this.components['btnSend']=c}}
+          ref={c=>{this.btnSend=c}}
           tabIndex='2'
         >
         Send
         </button>
-        <div 
-          tabIndex='3' 
-          ref={c=>{this.components['checkPublic']=c}}
-          className={styles.checkBox}
-        >
           <CheckBox
             value="public"
-            ref={c=>{this.checkPublic=c}}
+            ref={c=>this.checkPublic=c}
             name='checkPublic'
             id='checkPublic'
+            className={styles.checkBox}
+            tabIndex='3'
           />
-        </div>
       </div>
     );
   }
