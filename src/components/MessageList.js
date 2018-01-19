@@ -37,11 +37,11 @@ class MessageList extends Component {
     // }
 
     Events.scrollEvent.register('begin', () => {
-      console.log("begin", arguments);
+      // console.log("begin", arguments);
     });
 
     Events.scrollEvent.register('end', () => {
-      console.log("end", arguments);
+      // console.log("end", arguments);
       this.setState({lastMessage: this.state.messages[0]});
     });
   }
@@ -79,7 +79,7 @@ class MessageList extends Component {
   }
 
   handleScroll() {
-    console.log('handleScroll');
+    // console.log('handleScroll');
     if(this.messagesList.scrollTop <= 10) {
       this.fetchOldMessages();
     }
