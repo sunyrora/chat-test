@@ -57,9 +57,9 @@ class MessageList extends Component {
   }
 
   componentWillUnmount() {
-    if(this.messagesList) {
-      this.messagesList.removeEventListener('scroll', this.handleScroll);
-    }
+    // if(this.messagesList) {
+    //   this.messagesList.removeEventListener('scroll', this.handleScroll);
+    // }
     Events.scrollEvent.remove('begin');
     Events.scrollEvent.remove('end');
   }
