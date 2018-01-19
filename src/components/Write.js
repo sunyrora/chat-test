@@ -23,13 +23,18 @@ class Write extends Component {
 
   componentDidMount() {
     if(!this.components) {
+      // components group for tab key event 
       this.components = {
         inputMessage: this.inputMessage,
         btnSend: this.btnSend,
-        checkPublic: this.checkPublic.checkContainer,
+
+        // To make the element inside <CheckBox> component have the focus
+        // checkContainer: ref in the <CheckBox> component.
+        checkPublic: this.checkPublic.checkContainer, 
       };
     }
 
+    // textarea element allways have focus when mounted
     if(this.components['inputMessage']) {
       this.components['inputMessage'].focus();
     }
@@ -42,6 +47,8 @@ class Write extends Component {
     } else {
       let length = Object.keys(this.components).length;
       let tabIndex = activeElement.tabIndex % length + 1;
+      
+      // prev component when shifte key is pressed
       if(event.shiftKey) {
         tabIndex = activeElement.tabIndex - 1;
         if(tabIndex <= 0) tabIndex = length;
