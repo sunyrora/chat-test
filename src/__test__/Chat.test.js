@@ -1,54 +1,42 @@
-import React from 'react';
-import { shallow, mount } from 'enzyme';
+import {
+  renderMount,
+  renderShallow,
+  createSpy,
+  clearSpy
+} from './test_helper.js';
 import Chat from '../containers/Chat';
 import MessageList from'../components/MessageList';
 import Write from '../components/Write';
-import { POST_API } from '../api';
-import axios from 'axios';
 import moxios from 'moxios';
 
 
 describe('<Chat />', () => {
-  let comp;
   let spy;
   let id = 5000;
 
-  const createSpy = name => jest.spyOn(Chat.prototype, name);
-
-  const compShallow = (disableLifecycleMethods=false) => {
-    if(!comp) {
-      comp = shallow(<Chat />, { disableLifecycleMethods });
-    }
-    return comp;
-  };
-
-  const compMount = () => {
-    if(!comp) {
-      comp = mount(<Chat />);
-    }
-    return comp;
-  };
+  const shallow = (disableLifecycleMethods=false, props, state) => renderShallow(Chat, disableLifecycleMethods, props, state);
+  const mount = (props, state) =>renderMount(Chat, props, state);
+  const spyOn = (name) => createSpy(Chat, name);
 
   beforeEach(() => {
-    comp = undefined;
     moxios.install();
   });
 
   afterEach(() => {
     if(spy) {
-      spy.mockReset();
-      spy.mockRestore();
+      clearSpy(spy);
+      spy = undefined;
     }
     moxios.uninstall();
   });
 
   it('should render without issues', () => {
-    const component = compShallow();
+    const component = shallow();
     expect(component.length).toBe(1);
   });
 
   describe('Render all components', () => {
-    const component = compShallow();
+    const component = shallow();
     it('should render MessageList component', () => {
       expect(component.find(MessageList)).toHaveLength(1);
     });
@@ -58,14 +46,14 @@ describe('<Chat />', () => {
   });
   
   it('should pass sendMessage prop to Write component', () => {
-    const component = compShallow();
+    const component = shallow();
     expect(component.find(Write).prop('sendMessage')).toBe(component.instance().sendMessage);
   });
 
   describe('button clicked from Write Message', () => {
     it('should call sendMessage method', (done) => {
-      spy = createSpy('sendMessage');
-      const component = compMount();          
+      spy = spyOn('sendMessage');
+      const component = mount();          
       const write = component.find(Write);
       const message = {
         text: 'Test for Click event calls sendMessage method', 
@@ -90,7 +78,7 @@ describe('<Chat />', () => {
   describe('sendMessage method', () => {
     it('calls messageList.addNewMessage method', (done) => {
       spy = jest.spyOn(MessageList.prototype, 'addNewMessage');
-      const component = compMount();
+      const component = mount();
       const sendMessage = component.instance().sendMessage;
       const message = {
         text: `Test for call messageList.addNewMessage method

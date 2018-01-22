@@ -1,45 +1,62 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import {
+  renderMount,
+  renderShallow,
+  createSpy,
+  clearSpy
+} from './test_helper.js';
 import Message from '../components/Message';
 
 describe("<Message />", () => {
   let props;
-  let comp;
-  const compShallow = () => {
-    if(!comp) {
-      comp = shallow(
-        <Message {...props} />
-      );
-    }
-    return comp;
-  };
+  let spy;
 
-  const compMount = () => {
-    if(!comp) {
-      comp = mount(
-        <Message {...props} />
-      );
-    }
-    return comp;
-  };
+  const shallow = (disableLifecycleMethods=false, state) => renderShallow(Message, disableLifecycleMethods, props, state);
+  const mount = (state) =>renderMount(Message, props, state);
+  const spyOn = (name) => createSpy(Message, name);
+
+
+  // let comp;
+  // const compShallow = () => {
+  //   if(!comp) {
+  //     comp = shallow(
+  //       <Message {...props} />
+  //     );
+  //   }
+  //   return comp;
+  // };
+
+  // const compMount = () => {
+  //   if(!comp) {
+  //     comp = mount(
+  //       <Message {...props} />
+  //     );
+  //   }
+  //   return comp;
+  // };
 
   beforeEach(() => {
     props = {
       text: 'Message Test',
       isPublic: undefined,
     };
+  });
 
-    comp = undefined;
+  afterEach(() => {
+    if(spy) {
+      clearSpy(spy);
+      spy = undefined;
+    }
   });
 
   it('should render without issues', () => {
-    const component = compShallow();
+    const component = shallow();
     expect(component.length).toBe(1);
   });
 
   it('prints text prop', () => {
-    const component = compMount();
-   const searched =  component.containsAnyMatchingElements([
+    const component = mount();
+    const searched =  component.containsAnyMatchingElements([
       <div>Message Test</div>
     ]);
     expect(searched).toEqual(true);
@@ -51,7 +68,7 @@ describe("<Message />", () => {
     });
 
     it('should print "public"', () => {
-      const component = compMount();
+      const component = mount();
       const searched =  component.containsAnyMatchingElements([
         <div>public</div>
       ]);
@@ -65,7 +82,7 @@ describe("<Message />", () => {
     });
 
     it('should print "private"', () => {
-      const component = compMount();
+      const component = mount();
       const searched =  component.containsAnyMatchingElements([
         <div>private</div>
       ]);

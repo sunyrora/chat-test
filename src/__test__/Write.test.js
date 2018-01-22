@@ -1,29 +1,20 @@
-import React from 'react';
-import { shallow, mount } from 'enzyme';
+import {
+  renderMount,
+  renderShallow,
+  createSpy,
+  clearSpy
+} from './test_helper.js';
 import Write from '../components/Write';
 import CheckBox from '../components/CheckBox';
 
 describe('<Write />', () => {
   let props;
-  let comp;
   let spy;
   let message;
 
-  const createSpy = name => jest.spyOn(Write.prototype, name);
-
-  const compShallow = (disableLifecycleMethods=false) => {
-    if(!comp) {
-      comp = shallow(<Write {...props} />, { disableLifecycleMethods });
-    }
-    return comp;
-  };
-
-  const compMount = () => {
-    if(!comp) {
-      comp = mount(<Write {...props} />);
-    }
-    return comp;
-  };
+  const shallow = (disableLifecycleMethods=false, props, state) => renderShallow(Write, disableLifecycleMethods, props, state);
+  const mount = (props, state) =>renderMount(Write, props, state);
+  const spyOn = (name) => createSpy(Write, name);
 
   beforeEach(() => {
     props = {
@@ -34,31 +25,25 @@ describe('<Write />', () => {
     multiline
     string
     `;
-    comp = undefined;
   });
 
   afterEach(() => {
     if(spy) {
-      spy.mockReset();
-      spy.mockRestore();
+      clearSpy(spy);
+      spy = undefined;
     }
   });
 
   it('should render without issues', () => {
-    const component = compMount();
+    const component = mount();
     expect(component.length).toBe(1);
   });
 
   describe('Render all componets', () => {
-    const component = compMount();
+    const component = mount();
     it('should render textarea and set focus to the textarea', () => {  
       const textarea = component.find('textarea');
       const focused = document.activeElement;
-
-      console.log('textarea: ', textarea);
-      console.log('focused: ', focused);
-
-      // console.log('component.debug()', component.debug());
       
       expect(textarea).toHaveLength(1);
       expect(textarea.matchesElement(focused)).toEqual(true);
@@ -74,7 +59,7 @@ describe('<Write />', () => {
   });
 
   describe('textarea onChange', () => {
-    const component = compMount();
+    const component = mount();
     beforeEach(() => {
       component.find('textarea').simulate('change', {
         target: { name: 'message', value: message}
@@ -92,8 +77,8 @@ describe('<Write />', () => {
 
   describe('Send button clicked', () => {
     it('fires handleSendMessage event', () => {
-      spy = createSpy('handleSendMessage');
-      const component = compMount();
+      spy = spyOn('handleSendMessage');
+      const component = mount();
       component.find('button').simulate('click');
       
       expect(spy).toHaveBeenCalled();
@@ -104,7 +89,7 @@ describe('<Write />', () => {
         text: message,
         isPublic: true,
       };
-      const component = compMount();
+      const component = mount();
       const res = component.instance().createMessageData(data.text, data.isPublic);
       expect(res).toEqual(data);
     });
@@ -114,7 +99,7 @@ describe('<Write />', () => {
       let data;
       beforeEach(() => {
         props.sendMessage = jest.fn(msg => { console.log('sendMessage mock func: message: ', msg); });
-        component = compMount();
+        component = mount(props);
         //to change the value of state.message
         component.find('textarea').simulate('change', {
           target: { name: 'message', value: message}
@@ -136,8 +121,8 @@ describe('<Write />', () => {
     describe('sendMessage prop is not defined', () => {
       it('calls its own send method', () => {
         props.sendMessage = undefined;
-        spy = createSpy('send');
-        const component = compMount();
+        spy = spyOn('send');
+        const component = mount();
         component.find('button').simulate('click');
         expect(spy).toHaveBeenCalled();
       });
@@ -146,7 +131,7 @@ describe('<Write />', () => {
     describe('Reset value', () => {
       let component;
       beforeEach(() => {
-        component = compMount();
+        component = mount();
         component.find('button').simulate('click');
       });
 
@@ -159,5 +144,4 @@ describe('<Write />', () => {
       });
     });
   });
-
 });

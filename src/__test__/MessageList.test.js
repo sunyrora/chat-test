@@ -1,5 +1,9 @@
-import React from 'react';
-import { shallow, mount } from 'enzyme';
+import {
+  renderMount,
+  renderShallow,
+  createSpy,
+  clearSpy
+} from './test_helper.js';
 import MessageList from '../components/MessageList';
 import Message from '../components/Message';
 import moxios from 'moxios';
@@ -15,25 +19,12 @@ describe('<MessageList />', () => {
   ];
 
   let spy;
-  const createSpy = name => jest.spyOn(MessageList.prototype, name);
 
-  let comp;
-  const compShallow = (disableLifecycleMethods=false) => {
-    if(!comp) {
-      comp = shallow(<MessageList />, { disableLifecycleMethods });
-    }
-    return comp;
-  };
-
-  const compMount = () => {
-    if(!comp) {
-      comp = mount(<MessageList />);
-    }
-    return comp;
-  };
+  const shallow = (disableLifecycleMethods=false, props, state) => renderShallow(MessageList, disableLifecycleMethods, props, state);
+  const mount = (props, state) =>renderMount(MessageList, props, state);
+  const spyOn = (name) => createSpy(MessageList, name);
 
   beforeEach(() => {
-    comp = undefined;
     moxios.install();
   });
 
@@ -41,18 +32,18 @@ describe('<MessageList />', () => {
     moxios.uninstall()
 
     if(spy) {
-      spy.mockReset();
-      spy.mockRestore();
+      clearSpy(spy);
+      spy = undefined;
     }
   });
 
   it('should render without issues', () => {
-    const component = compShallow();
+    const component = shallow();
     expect(component.length).toBe(1);
   });
 
   describe('Render all components', () => {
-    const component = compShallow();    
+    const component = shallow();    
     component.instance().fetchMessages = jest.fn(); // avoid network ruquest
     component.setState({messages});
 
@@ -76,14 +67,14 @@ describe('<MessageList />', () => {
   
   describe('componentDidMount', () => {
     it('calls fetchMessages', () => {
-      spy = createSpy('fetchMessages');
-      const component = compShallow(true);
+      spy = spyOn('fetchMessages');
+      const component = shallow(true);
       component.instance().componentDidMount();
       expect(spy).toHaveBeenCalled();
     });
 
     it('should update the state', (done) => {
-      const component = compShallow();
+      const component = shallow();
       moxios.wait(() => {
         let request = moxios.requests.mostRecent();
         request.respondWith({
@@ -112,7 +103,7 @@ describe('<MessageList />', () => {
     let addNewMessage;
     let newMessage;
     beforeEach(() => {
-      component = compShallow();
+      component = shallow();
       component.instance().fetchMessages = jest.fn(); // avoid network ruquest
       component.setState({messages});
       addNewMessage = component.instance().addNewMessage;
@@ -134,8 +125,8 @@ describe('<MessageList />', () => {
 
   describe('scroll event', () => {
     it('fires handleScroll event', () => {
-      spy = createSpy('handleScroll');
-      const component = compMount();
+      spy = spyOn('handleScroll');
+      const component = mount();
       const messageList = component.find({name: 'messageList'});
       messageList.simulate('scroll');
       expect(spy).toHaveBeenCalled();      
@@ -143,8 +134,8 @@ describe('<MessageList />', () => {
     
     describe('When scroll is on top', () => {
       it('calls fetchOldMessages', () => {
-        spy = createSpy('fetchOldMessages');
-        const component = compMount();
+        spy = spyOn('fetchOldMessages');
+        const component = mount();
         const messageList = component.find({name: 'messageList'});
         // no data so scrollTop is 0
         messageList.simulate('scroll');
@@ -155,8 +146,8 @@ describe('<MessageList />', () => {
     // nett to find how to simulate scrollToBottom event
     xdescribe('When scroll is on bottom', () => {
       it('calls fetchNewMessages', () => {
-        spy = createSpy('fetchNewMessages');
-        const component = compMount();
+        spy = spyOn('fetchNewMessages');
+        const component = mount();
         const messageList = component.find({name: 'messageList'});
         
         expect(spy).toHaveBeenCalled();
